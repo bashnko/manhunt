@@ -2,8 +2,10 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const DefaultConfigName = "config.json"
@@ -16,7 +18,7 @@ type Shortcut struct {
 
 type Config struct {
 	DefaultEngine string
-	CommandPrfix  string
+	CommandPrefix string
 	LinksCommand  string
 	AddURLCommand string
 	SearchEngines map[string]string
@@ -26,7 +28,7 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		DefaultEngine: "gg",
-		CommandPrfix:  ":",
+		CommandPrefix: ":",
 		LinksCommand:  ":links",
 		AddURLCommand: ":add_url",
 		SearchEngines: map[string]string{
@@ -47,4 +49,56 @@ func SaveConfig(path string, config Config) error {
 		return err
 	}
 	return os.WriteFile(path, data, 0644)
+}
+
+func ConfigPath(configDir string) string {
+	return filepath.Join(configDir, "manhunt", DefaultConfigName)
+}
+
+func LoadConfig(path string) (Config, error) {
+	config := DefaultConfig()
+
+	if strings.TrimSpace(path) == "" {
+		return config, nil
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return config, nil
+		}
+		return Config{}, err
+	}
+
+	if err := json.Unmarshal(data, &config); err != nil {
+		return Config{}, err
+	}
+
+	config.applyDefaults()
+	return config, nil
+}
+
+func (config *Config) applyDefaults() {
+	defaults := DefaultConfig()
+
+	// aaaaahhh! only if someone could do this for me. repeatativeeeeeeeeee
+	if config.SearchEngines == nil {
+		config.SearchEngines = defaults.SearchEngines
+	}
+	if config.Bookmarks == nil {
+		config.Bookmarks = defaults.Bookmarks
+	}
+	if strings.TrimSpace(config.DefaultEngine) == "" {
+		config.DefaultEngine = defaults.DefaultEngine
+	}
+	if strings.TrimSpace(config.CommandPrefix) == "" {
+		config.CommandPrefix = defaults.CommandPrefix
+	}
+	if strings.TrimSpace(config.LinksCommand) == "" {
+		config.LinksCommand = defaults.LinksCommand
+	}
+	if strings.TrimSpace(config.AddURLCommand) == "" {
+		config.AddURLCommand = defaults.AddURLCommand
+	}
+
 }
