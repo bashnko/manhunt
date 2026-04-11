@@ -21,10 +21,11 @@
           packages = with pkgs; [
             dmenu
             rofi
+            fuzzel
+            bemenu
           ];
 
           shellHook = ''
-            echo "inside dev shell"
             export GOPATH=$PWD/.gopath
 
           '';
