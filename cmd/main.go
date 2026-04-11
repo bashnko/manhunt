@@ -2,9 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os/exec"
 )
 
 func main() {
-	fmt.Println("Hey There")
+	cmd, err := exec.Command("whomai").Output()
+	if err != nil {
+		log.Fatal()
+	}
+	fmt.Println(string(cmd))
 
 }

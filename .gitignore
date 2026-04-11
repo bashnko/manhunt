@@ -1,1 +1,5 @@
 .direnv/*
+test.go
+Session.vim
+.gopath/*
+.env
