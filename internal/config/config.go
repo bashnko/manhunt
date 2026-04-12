@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -13,7 +14,7 @@ const DefaultConfigName = "config.json"
 type Shortcut struct {
 	Keyword string `json:"keyword"`
 	Name    string `json:"name"`
-	URL     string `json:"uRL"`
+	URL     string `json:"url"`
 }
 
 type Config struct {
@@ -92,6 +93,23 @@ func Initialize(configDir string) error {
 		return err
 	}
 	return nil
+}
+func SearchEnginesKeys(config Config) []string {
+	keys := make([]string, 0, len(config.SearchEngines))
+	for key := range config.SearchEngines {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func BookmarkKeys(config Config) []string {
+	keys := make([]string, 0, len(config.Bookmarks))
+	for _, bookmark := range config.Bookmarks {
+		keys = append(keys, bookmark.Keyword)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (config *Config) applyDefaults() {
