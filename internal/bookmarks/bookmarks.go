@@ -63,6 +63,22 @@ func ResolveSelection(input string, cfg config.Config) (string, error) {
 
 }
 
+func Upsert(cfg *config.Config, bookmark config.Shortcut) {
+	bookmark.Keyword = strings.TrimSpace(bookmark.Keyword)
+	bookmark.Name = strings.TrimSpace(bookmark.Name)
+	bookmark.URL = strings.TrimSpace(bookmark.URL)
+
+	updated := make([]config.Shortcut, 0, len(cfg.Bookmarks)+1)
+	for _, existing := range cfg.Bookmarks {
+		if strings.EqualFold(existing.Keyword, bookmark.Keyword) {
+			continue
+		}
+		updated = append(updated, existing)
+	}
+	cfg.Bookmarks = append(updated, bookmark)
+
+}
+
 func NormalizeURL(value string) string {
 	trimmed := strings.TrimSpace(value)
 	if trimmed == "" {

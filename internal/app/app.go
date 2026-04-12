@@ -126,9 +126,12 @@ func runAddURLMode(configPath string, cfg config.Config) error {
 	if bookmark.Name == "" || bookmark.Keyword == "" || bookmark.URL == "" {
 		return fmt.Errorf("values are empty")
 	}
-	/* i need to write a func to save my new urls to configPath
-	for now lets return nil
-	*/
+
+	bookmarks.Upsert(&cfg, bookmark)
+	if err := config.SaveConfig(configPath, cfg); err != nil {
+		return err
+	}
+
 	return nil
 
 }
