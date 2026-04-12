@@ -1,6 +1,7 @@
 package bookmarks
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -17,6 +18,49 @@ func Items(cfg config.Config) []string {
 	}
 	sort.Strings(items)
 	return items
+}
+
+func ResolveSelection(input string, cfg config.Config) (string, error) {
+	trimmed := strings.TrimSpace(input)
+	if trimmed == "" {
+		return "", errors.New("empty bookmark selection")
+	}
+
+	if strings.Contains(trimmed, "\t") {
+		parts := strings.Split(trimmed, "\t")
+		if len(parts) > 0 {
+			last := strings.TrimSpace(parts[len(parts)-1])
+			if last != "" {
+				return last, nil
+			}
+		}
+	}
+
+	lower := strings.ToLower(trimmed)
+
+	for _, bookmark := range cfg.Bookmarks {
+		if strings.EqualFold(bookmark.Keyword, trimmed) || strings.EqualFold(bookmark.Name, trimmed) {
+			return bookmark.URL, nil
+
+		}
+	}
+
+	matches := make([]config.Shortcut, 0)
+	for _, bookmark := range cfg.Bookmarks {
+		name := strings.ToLower(bookmark.Name)
+		Keyword := strings.ToLower(bookmark.Keyword)
+		if strings.Contains(name, lower) || strings.Contains(Keyword, lower) {
+			matches = append(matches, bookmark)
+		}
+	}
+	if len(matches) == 1 {
+		return matches[0].URL, nil
+	}
+	if len(matches) > 1 {
+		return "", fmt.Errorf("multiple bookmarks match %q, be more specific", trimmed)
+	}
+	return "", fmt.Errorf("bookmark %q not found", trimmed)
+
 }
 
 func NormalizeURL(value string) string {
