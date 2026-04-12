@@ -78,6 +78,22 @@ func LoadConfig(path string) (Config, error) {
 	return config, nil
 }
 
+func Initialize(configDir string) error {
+	if strings.TrimSpace(configDir) == "" {
+		var err error
+		configDir, err = os.UserCacheDir()
+		if err != nil {
+			return err
+		}
+	}
+
+	configPath := ConfigPath(configDir)
+	if err := SaveConfig(configPath, DefaultConfig()); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (config *Config) applyDefaults() {
 	defaults := DefaultConfig()
 
