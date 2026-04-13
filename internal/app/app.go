@@ -76,9 +76,6 @@ func runCommand(selection string, cfg config.Config, configPath string) error {
 		return runCommandMenu(cfg, configPath)
 	}
 	if commands.IsLinks(selectedCommand, cfg) {
-		return runCommandMenu(cfg, configPath)
-	}
-	if commands.IsLinks(selectedCommand, cfg) {
 		return runLinksMode(cfg)
 	}
 	if commands.IsAddURL(selectedCommand, cfg) {
@@ -175,7 +172,7 @@ func runAddURLMode(configPath string, cfg config.Config) error {
 }
 
 func loadConfig() (config.Config, string, error) {
-	configDir, err := os.UserCacheDir()
+	configDir, err := os.UserConfigDir()
 	if err != nil {
 		return config.Config{}, "", err
 	}

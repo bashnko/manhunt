@@ -82,7 +82,7 @@ func LoadConfig(path string) (Config, error) {
 func Initialize(configDir string) error {
 	if strings.TrimSpace(configDir) == "" {
 		var err error
-		configDir, err = os.UserCacheDir()
+		configDir, err = os.UserConfigDir()
 		if err != nil {
 			return err
 		}

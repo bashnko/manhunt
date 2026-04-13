@@ -55,7 +55,7 @@ func resolevDirectUrl(value string) (string, bool) {
 		}
 	}
 
-	if strings.ContainsAny(value, "\t\n") {
+	if strings.ContainsAny(value, " \t\n") {
 		return "", false
 	}
 

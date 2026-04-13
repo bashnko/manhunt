@@ -97,7 +97,7 @@ func resolveDircetURL(value string) (string, bool) {
 		}
 	}
 
-	if strings.Contains(value, " \t\n") {
+	if strings.ContainsAny(value, " \t\n") {
 		return "", false
 	}
 
