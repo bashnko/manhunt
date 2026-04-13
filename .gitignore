@@ -3,3 +3,4 @@ test.go
 Session.vim
 .gopath/*
 .env
+dist/
