@@ -22,7 +22,9 @@ func Run(args []string) error {
 		return err
 	}
 	prompt := buildPrompt(cfg)
-	selection, err := runners.Rofi{}.Select(prompt, commands.StartupItems(cfg))
+	startupItems := commands.StartupItems(cfg)
+	startupRows := len(commands.Items(cfg))
+	selection, err := runners.Rofi{}.SelectWithLines(prompt, startupItems, startupRows)
 	if err != nil {
 		return err
 	}
@@ -49,17 +51,7 @@ func Run(args []string) error {
 }
 
 func buildPrompt(cfg config.Config) string {
-	parts := []string{"manhunt"}
-	engines := config.SearchEnginesKeys(cfg)
-	bookmarkKeys := config.BookmarkKeys(cfg)
-
-	if len(engines) > 0 {
-		parts = append(parts, "search:", strings.Join(engines, ","))
-	}
-	if len(bookmarkKeys) > 0 {
-		parts = append(parts, "bookmarks:", strings.Join(bookmarkKeys, ","))
-	}
-	return strings.Join(parts, " ")
+	return "manhunt search "
 }
 
 func openURL(target string) error {
