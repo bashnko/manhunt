@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bashnko/manhunt/internal/bookmarks"
 	"github.com/bashnko/manhunt/internal/config"
 )
 
@@ -89,11 +90,20 @@ func commandAliases(command string, prefix string, fallbackName string) []string
 		if alias == "" {
 			continue
 		}
+		if _, ok := seen[alias]; ok {
+			continue
+		}
 		seen[alias] = struct{}{}
 		unique = append(unique, alias)
 	}
 	return unique
+}
 
+func startupItems(cfg config.Config) []string {
+	items := make([]string, 0, len(Items(cfg))+len(bookmarks.SlashItems(cfg)))
+	items = append(items, Items(cfg)...)
+	items = append(items, bookmarks.SlashItems(cfg)...)
+	return items
 }
 
 func commandName(command string, prefix string) string {

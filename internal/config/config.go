@@ -94,6 +94,7 @@ func Initialize(configDir string) error {
 	}
 	return nil
 }
+
 func SearchEnginesKeys(config Config) []string {
 	keys := make([]string, 0, len(config.SearchEngines))
 	for key := range config.SearchEngines {
