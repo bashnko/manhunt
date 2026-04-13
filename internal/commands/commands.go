@@ -99,7 +99,7 @@ func commandAliases(command string, prefix string, fallbackName string) []string
 	return unique
 }
 
-func startupItems(cfg config.Config) []string {
+func StartupItems(cfg config.Config) []string {
 	items := make([]string, 0, len(Items(cfg))+len(bookmarks.SlashItems(cfg)))
 	items = append(items, Items(cfg)...)
 	items = append(items, bookmarks.SlashItems(cfg)...)

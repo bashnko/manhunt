@@ -9,6 +9,7 @@ import (
 	"github.com/bashnko/manhunt/internal/bookmarks"
 	"github.com/bashnko/manhunt/internal/commands"
 	"github.com/bashnko/manhunt/internal/config"
+	"github.com/bashnko/manhunt/internal/search"
 )
 
 func Run(args []string) error {
@@ -20,7 +21,31 @@ func Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	return nil
+	prompt := buildPrompt(cfg)
+	selection, err := runners.Rofi{}.Select(prompt, commands.StartupItems(cfg))
+	if err != nil {
+		return err
+	}
+
+	selection = strings.TrimSpace(selection)
+	if selection == "" {
+		return nil
+	}
+
+	if commands.IsInput(selection, cfg) {
+		return runCommand(selection, cfg, configPath)
+	}
+
+	if bookmarks.IsLinksInput(selection) {
+		return runSlashLinks(selection, cfg)
+	}
+
+	url, err := search.Resolve(selection, cfg)
+	if err != nil {
+		return err
+	}
+
+	return openURL(url)
 }
 
 func buildPrompt(cfg config.Config) string {
@@ -99,6 +124,19 @@ func runLinksMode(cfg config.Config) error {
 		return err
 	}
 
+	return openURL(url)
+
+}
+
+func runSlashLinks(selection string, cfg config.Config) error {
+	trimmed := bookmarks.TrimInput(selection)
+	if trimmed == "" {
+		return runLinksMode(cfg)
+	}
+	url, err := bookmarks.ResolveSelection(trimmed, cfg)
+	if err != nil {
+		return runLinksMode(cfg)
+	}
 	return openURL(url)
 
 }
