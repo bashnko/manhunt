@@ -1,0 +1,22 @@
+{
+  "bin": {
+    "manhunt": "index.js"
+  },
+  "dependencies": {
+    "tar": "^7.5.2"
+  },
+  "description": "npm wrapper for manhunt",
+  "files": [
+    "index.js",
+    "install.js",
+    "bin/",
+    "README.md"
+  ],
+  "license": "MIT",
+  "name": "manhunt",
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "version": "1.0.1"
+}
+
