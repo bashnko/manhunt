@@ -66,6 +66,9 @@ func LoadConfig(path string) (Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
+			if saveErr := SaveConfig(path, config); saveErr != nil {
+				return Config{}, saveErr
+			}
 			return config, nil
 		}
 		return Config{}, err
