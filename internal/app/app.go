@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/bashnko/manhunt/external/browsers"
 	"github.com/bashnko/manhunt/external/runners"
 	"github.com/bashnko/manhunt/internal/bookmarks"
 	"github.com/bashnko/manhunt/internal/commands"
@@ -34,12 +35,14 @@ func Run(args []string) error {
 		return nil
 	}
 
+	selection, openPrivate := extractPrivateSelection(selection, cfg)
+
 	if commands.IsInput(selection, cfg) {
 		return runCommand(selection, cfg, configPath)
 	}
 
 	if bookmarks.IsLinksInput(selection) {
-		return runSlashLinks(selection, cfg)
+		return runSlashLinks(selection, cfg, openPrivate)
 	}
 
 	url, err := search.Resolve(selection, cfg)
@@ -47,19 +50,16 @@ func Run(args []string) error {
 		return err
 	}
 
-	return openURL(url)
+	return openURL(url, openPrivate)
 }
 
 func buildPrompt(cfg config.Config) string {
 	return "manhunt search "
 }
 
-func openURL(target string) error {
+func openURL(target string, private bool) error {
 	command := os.Getenv("BROWSER")
-	if command == "" {
-		command = "xdg-open"
-	}
-	return runners.Open(command, []string{target})
+	return browsers.Open(target, command, private)
 }
 
 func runCommand(selection string, cfg config.Config, configPath string) error {
@@ -68,7 +68,7 @@ func runCommand(selection string, cfg config.Config, configPath string) error {
 		return runCommandMenu(cfg, configPath)
 	}
 	if commands.IsLinks(selectedCommand, cfg) {
-		return runLinksMode(cfg)
+		return runLinksMode(cfg, false)
 	}
 	if commands.IsAddURL(selectedCommand, cfg) {
 		return runAddURLMode(configPath, cfg)
@@ -92,7 +92,7 @@ func runCommandMenu(cfg config.Config, configPath string) error {
 	return runCommand(selection, cfg, configPath)
 }
 
-func runLinksMode(cfg config.Config) error {
+func runLinksMode(cfg config.Config, private bool) error {
 	items := bookmarks.SlashItems(cfg)
 	if len(items) == 0 {
 		return fmt.Errorf("no bookmarks configured")
@@ -113,21 +113,44 @@ func runLinksMode(cfg config.Config) error {
 		return err
 	}
 
-	return openURL(url)
+	return openURL(url, private)
 
 }
 
-func runSlashLinks(selection string, cfg config.Config) error {
+func runSlashLinks(selection string, cfg config.Config, private bool) error {
 	trimmed := bookmarks.TrimInput(selection)
 	if trimmed == "" {
-		return runLinksMode(cfg)
+		return runLinksMode(cfg, private)
 	}
 	url, err := bookmarks.ResolveSelection(trimmed, cfg)
 	if err != nil {
-		return runLinksMode(cfg)
+		return runLinksMode(cfg, private)
 	}
-	return openURL(url)
+	return openURL(url, private)
 
+}
+
+func extractPrivateSelection(input string, cfg config.Config) (string, bool) {
+	trimmed := strings.TrimSpace(input)
+	if trimmed == "" {
+		return "", false
+	}
+
+	specifier := strings.TrimSpace(cfg.PrivTabSpecifire)
+	if specifier == "" {
+		specifier = config.DefaultConfig().PrivTabSpecifire
+	}
+
+	if !strings.HasPrefix(trimmed, specifier) {
+		return trimmed, false
+	}
+
+	withoutPrefix := strings.TrimSpace(strings.TrimPrefix(trimmed, specifier))
+	if withoutPrefix == "" {
+		return trimmed, false
+	}
+
+	return withoutPrefix, true
 }
 
 func runAddURLMode(configPath string, cfg config.Config) error {

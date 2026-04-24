@@ -18,20 +18,22 @@ type Shortcut struct {
 }
 
 type Config struct {
-	DefaultEngine string
-	CommandPrefix string
-	LinksCommand  string
-	AddURLCommand string
-	SearchEngines map[string]string
-	Bookmarks     []Shortcut
+	DefaultEngine    string
+	CommandPrefix    string
+	LinksCommand     string
+	AddURLCommand    string
+	PrivTabSpecifire string `json:"priv_tab_specifire"`
+	SearchEngines    map[string]string
+	Bookmarks        []Shortcut
 }
 
 func DefaultConfig() Config {
 	return Config{
-		DefaultEngine: "gg",
-		CommandPrefix: ":",
-		LinksCommand:  ":links",
-		AddURLCommand: ":add_url",
+		DefaultEngine:    "gg",
+		CommandPrefix:    ":",
+		LinksCommand:     ":links",
+		AddURLCommand:    ":add_url",
+		PrivTabSpecifire: "!",
 		SearchEngines: map[string]string{
 			"gg": "https://www.google.com/search?q=%s",
 			"yt": "https://www.youtube.com/results?search_query=%s",
@@ -137,6 +139,9 @@ func (config *Config) applyDefaults() {
 	}
 	if strings.TrimSpace(config.AddURLCommand) == "" {
 		config.AddURLCommand = defaults.AddURLCommand
+	}
+	if strings.TrimSpace(config.PrivTabSpecifire) == "" {
+		config.PrivTabSpecifire = defaults.PrivTabSpecifire
 	}
 
 }
