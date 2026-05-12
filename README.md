@@ -149,6 +149,7 @@ After changing keybind configs, reload your compositor/window manager config.
 
 - type normal text to search with the default engine
 - type `engine query` to use a specific engine, for example: `yt lofi mix`
+- prefix any query with `!` to open it in a private/incognito window (supported browsers only)
 - type `:links` to browse saved bookmarks
 - type `:add_url` to add a bookmark interactively
 
@@ -169,6 +170,7 @@ manhunt is fully extensible and configurable. You can customize engines, command
   "CommandPrefix": ":",
   "LinksCommand": ":links",
   "AddURLCommand": ":add_url",
+  "priv_tab_specifire": "!",
   "SearchEngines": {
     "gg": "https://www.google.com/search?q=%s",
     "ms": "https://music.youtube.com/search?q=%s",
