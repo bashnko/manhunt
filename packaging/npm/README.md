@@ -1,6 +1,6 @@
 # manhunt-npm
 
-npm wrapper for **manhunt** from [https://github.com/bashnko/manhunt](https://github.com/bashnko/manhunt).
+npm wrapper for **manhunt** from [https://github.com/h3yng/manhunt](https://github.com/h3yng/manhunt).
 
 ## Install
 
@@ -19,5 +19,5 @@ npm wrapper for **manhunt** from [https://github.com/bashnko/manhunt](https://gi
 ## Release source
 
 - Version: v1.0.0
-- Repository: https://github.com/bashnko/manhunt
+- Repository: https://github.com/h3yng/manhunt
 

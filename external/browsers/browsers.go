@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/bashnko/manhunt/external/runners"
+	"github.com/h3yng/manhunt/external/runners"
 )
 
 func Open(target string, browserCommand string, private bool) error {

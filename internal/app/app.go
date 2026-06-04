@@ -5,12 +5,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bashnko/manhunt/external/browsers"
-	"github.com/bashnko/manhunt/external/runners"
-	"github.com/bashnko/manhunt/internal/bookmarks"
-	"github.com/bashnko/manhunt/internal/commands"
-	"github.com/bashnko/manhunt/internal/config"
-	"github.com/bashnko/manhunt/internal/search"
+	"github.com/h3yng/manhunt/external/browsers"
+	"github.com/h3yng/manhunt/external/runners"
+	"github.com/h3yng/manhunt/internal/bookmarks"
+	"github.com/h3yng/manhunt/internal/commands"
+	"github.com/h3yng/manhunt/internal/config"
+	"github.com/h3yng/manhunt/internal/search"
 )
 
 func Run(args []string) error {

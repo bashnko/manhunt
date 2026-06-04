@@ -3,7 +3,7 @@ package bookmarks
 import (
 	"strings"
 
-	"github.com/bashnko/manhunt/internal/config"
+	"github.com/h3yng/manhunt/internal/config"
 )
 
 func IsLinksInput(input string) bool {

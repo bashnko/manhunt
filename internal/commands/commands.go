@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bashnko/manhunt/internal/bookmarks"
-	"github.com/bashnko/manhunt/internal/config"
+	"github.com/h3yng/manhunt/internal/bookmarks"
+	"github.com/h3yng/manhunt/internal/config"
 )
 
 type Command struct {

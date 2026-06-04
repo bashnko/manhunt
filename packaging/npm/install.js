@@ -13,7 +13,7 @@ const platformKey = process.platform + '-' + process.arch;
 
 const assets = {
   "linux-x64": {
-    url: "https://github.com/bashnko/manhunt/releases/download/v1.0.0/manhunt_1.0.0_linux_amd64.tar.gz",
+    url: "https://github.com/h3yng/manhunt/releases/download/v1.0.0/manhunt_1.0.0_linux_amd64.tar.gz",
     fileName: "manhunt_v1.0.0_linux_amd64.tar.gz",
     archive: "tar.gz"
   },

@@ -20,7 +20,7 @@ When you run manhunt for the first time, it creates your config file automatical
 Use this if you have Go installed.
 
 ```bash
-go install github.com/bashnko/manhunt/cmd/manhunt@latest
+go install github.com/h3yng/manhunt/cmd/manhunt@latest
 ```
 
 Make sure your Go bin directory is in `PATH` (usually `~/go/bin`).
@@ -38,7 +38,7 @@ npm install -g manhunt
 Clone and build from source:
 
 ```bash
-git clone https://github.com/bashnko/manhunt.git
+git clone https://github.com/h3yng/manhunt.git
 cd manhunt
 go build -o manhunt ./cmd/manhunt
 sudo install -m 0755 manhunt /usr/local/bin/manhunt

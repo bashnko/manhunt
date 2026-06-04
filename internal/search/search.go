@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/bashnko/manhunt/internal/config"
+	"github.com/h3yng/manhunt/internal/config"
 )
 
 func Resolve(input string, cfg config.Config) (string, error) {

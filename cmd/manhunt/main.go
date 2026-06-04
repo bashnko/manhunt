@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/bashnko/manhunt/internal/app"
+	"github.com/h3yng/manhunt/internal/app"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/bashnko/manhunt/internal/config"
+	"github.com/h3yng/manhunt/internal/config"
 )
 
 func Items(cfg config.Config) []string {
