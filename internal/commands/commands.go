@@ -14,10 +14,11 @@ type Command struct {
 }
 
 func Prefix(cfg config.Config) string {
-	if strings.TrimSpace(cfg.CommandPrefix) == "" {
-		return config.DefaultConfig().CommandPrefix
+	aliases := config.NamespaceAliases(cfg, "commands")
+	if len(aliases) > 0 {
+		return aliases[0]
 	}
-	return strings.TrimSpace(cfg.CommandPrefix)
+	return ":"
 }
 
 func IsInput(input string, cfg config.Config) bool {
@@ -30,11 +31,16 @@ func IsInput(input string, cfg config.Config) bool {
 }
 
 func Items(cfg config.Config) []string {
+	commandSource, ok := cfg.Sources["commands"]
+	if !ok {
+		commandSource = config.DefaultConfig().Sources["commands"]
+	}
 	commands := []Command{
 		{Value: Prefix(cfg), Description: "show available command"},
 		{Value: ":help", Description: "show available commands"},
-		{Value: cfg.LinksCommand, Description: "browse saved links"},
-		{Value: cfg.AddURLCommand, Description: "add a saved link"},
+	}
+	for _, item := range commandSource.Items {
+		commands = append(commands, Command{Value: item.Keyword, Description: item.Name})
 	}
 
 	items := make([]string, 0, len(commands))
@@ -57,7 +63,7 @@ func Selection(input string) string {
 
 func IsAddURL(input string, cfg config.Config) bool {
 	selection := Selection(input)
-	for _, alias := range commandAliases(cfg.AddURLCommand, Prefix(cfg), "add_url") {
+	for _, alias := range commandAliases("add_url", Prefix(cfg), "add_url") {
 		if strings.EqualFold(selection, alias) {
 			return true
 		}
@@ -67,7 +73,7 @@ func IsAddURL(input string, cfg config.Config) bool {
 
 func IsLinks(input string, cfg config.Config) bool {
 	selection := Selection(strings.TrimSpace(input))
-	for _, alias := range commandAliases(cfg.LinksCommand, Prefix(cfg), "links") {
+	for _, alias := range commandAliases("links", Prefix(cfg), "links") {
 		if strings.EqualFold(selection, alias) {
 			return true
 		}
@@ -109,6 +115,5 @@ func StartupItems(cfg config.Config) []string {
 func commandName(command string, prefix string) string {
 	name := strings.TrimSpace(command)
 	name = strings.TrimPrefix(name, prefix)
-	name = strings.TrimPrefix(name, "/")
 	return name
 }

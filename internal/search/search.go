@@ -24,19 +24,14 @@ func Resolve(input string, cfg config.Config) (string, error) {
 	keyword := parts[0]
 	queryText := strings.TrimSpace(strings.TrimPrefix(trimmed, keyword))
 
-	if template, ok := cfg.SearchEngines[keyword]; ok {
+	searchEngines := cfg.EffectiveSearchEngines()
+	if template, ok := searchEngines[keyword]; ok {
 		return formatTemplate(template, queryText)
 	}
 
-	for _, bookmark := range cfg.Bookmarks {
-		if bookmark.Keyword == keyword {
-			return formatTemplate(bookmark.URL, queryText)
-		}
-	}
-
-	defaultTemplate, ok := cfg.SearchEngines[cfg.DefaultEngine]
+	defaultTemplate, ok := searchEngines[cfg.EffectiveDefaultEngine()]
 	if !ok {
-		return "", fmt.Errorf("default search engine %q not found", cfg.DefaultEngine)
+		return "", fmt.Errorf("default search engine %q not found", cfg.EffectiveDefaultEngine())
 	}
 	return formatTemplate(defaultTemplate, trimmed)
 }

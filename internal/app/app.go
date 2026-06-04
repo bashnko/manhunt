@@ -136,9 +136,9 @@ func extractPrivateSelection(input string, cfg config.Config) (string, bool) {
 		return "", false
 	}
 
-	specifier := strings.TrimSpace(cfg.PrivTabSpecifire)
+	specifier := strings.TrimSpace(cfg.Router.PrivatePrefix)
 	if specifier == "" {
-		specifier = config.DefaultConfig().PrivTabSpecifire
+		specifier = config.DefaultConfig().Router.PrivatePrefix
 	}
 
 	if !strings.HasPrefix(trimmed, specifier) {

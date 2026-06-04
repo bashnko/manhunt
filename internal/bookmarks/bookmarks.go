@@ -12,8 +12,9 @@ import (
 )
 
 func Items(cfg config.Config) []string {
-	items := make([]string, 0, len(cfg.Bookmarks))
-	for _, bookmark := range cfg.Bookmarks {
+	bookmarks := cfg.EffectiveBookmarks()
+	items := make([]string, 0, len(bookmarks))
+	for _, bookmark := range bookmarks {
 		items = append(items, fmt.Sprintf("%s\t%s\t%s", bookmark.Keyword, bookmark.Name, bookmark.URL))
 	}
 	sort.Strings(items)
@@ -26,6 +27,9 @@ func ResolveSelection(input string, cfg config.Config) (string, error) {
 		return "", errors.New("empty bookmark selection")
 	}
 
+	linksSource, _ := cfg.EffectiveSource("links")
+	fuzzy := linksSource.Fuzzy
+
 	if strings.Contains(trimmed, "\t") {
 		parts := strings.Split(trimmed, "\t")
 		if len(parts) > 0 {
@@ -36,17 +40,21 @@ func ResolveSelection(input string, cfg config.Config) (string, error) {
 		}
 	}
 
-	lower := strings.ToLower(trimmed)
-
-	for _, bookmark := range cfg.Bookmarks {
+	for _, bookmark := range cfg.EffectiveBookmarks() {
 		if strings.EqualFold(bookmark.Keyword, trimmed) || strings.EqualFold(bookmark.Name, trimmed) {
 			return bookmark.URL, nil
 
 		}
 	}
 
+	if !fuzzy {
+		return "", fmt.Errorf("bookmark %q not found", trimmed)
+	}
+
+	lower := strings.ToLower(trimmed)
+
 	matches := make([]config.Shortcut, 0)
-	for _, bookmark := range cfg.Bookmarks {
+	for _, bookmark := range cfg.EffectiveBookmarks() {
 		name := strings.ToLower(bookmark.Name)
 		Keyword := strings.ToLower(bookmark.Keyword)
 		if strings.Contains(name, lower) || strings.Contains(Keyword, lower) {
@@ -68,14 +76,23 @@ func Upsert(cfg *config.Config, bookmark config.Shortcut) {
 	bookmark.Name = strings.TrimSpace(bookmark.Name)
 	bookmark.URL = strings.TrimSpace(bookmark.URL)
 
-	updated := make([]config.Shortcut, 0, len(cfg.Bookmarks)+1)
-	for _, existing := range cfg.Bookmarks {
+	bookmarks := cfg.EffectiveBookmarks()
+	updated := make([]config.Shortcut, 0, len(bookmarks)+1)
+	for _, existing := range bookmarks {
 		if strings.EqualFold(existing.Keyword, bookmark.Keyword) {
 			continue
 		}
 		updated = append(updated, existing)
 	}
-	cfg.Bookmarks = append(updated, bookmark)
+	if cfg.Sources == nil {
+		cfg.Sources = map[string]config.SourceConfig{}
+	}
+	linksSource, _ := cfg.EffectiveSource("links")
+	cfg.Sources["links"] = config.SourceConfig{
+		Type:  "bookmarks",
+		Fuzzy: linksSource.Fuzzy,
+		Items: append(updated, bookmark),
+	}
 
 }
 
